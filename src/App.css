@@ -15,9 +15,22 @@ h2 {
   font-size: 50px;
 }
 
-.Pokeball {
-  width: 300px;
-  height: 300px;
+.Pokeball{
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+#band {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+#startButton {
+  position: absolute;
+  top: 138.5px;
 }
 
 .App {
