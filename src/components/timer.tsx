@@ -1,49 +1,56 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { makeStyles} from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
+import * as React from "react";
 
-import "../App.css";
+type Props = {
+  startTimeSeconds: number;
+};
 
-const useStyles = makeStyles(() => ({
-  timer: {
-    // Add styling here
-  },
-}));
+type State = {
+  timeRemainingSeconds: number;
+  minute: number;
+  second: number;
+  timeString: string;
+};
 
-export default function Timer(props: any) {
-  const { initialMinute = 0, initialSeconds = 0 } = props;
-  const [minutes, setMinutes] = useState(initialMinute);
-  const [seconds, setSeconds] = useState(initialSeconds);
+export class Timer extends React.Component<Props, State> {
+  private timerID: any;
 
-  useEffect(() => {
-    let myInterval = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
-      }
-      if (seconds === 0) {
-        if (minutes === 0) {
-          clearInterval(myInterval);
-        } else {
-          setMinutes(minutes - 1);
-          setSeconds(59);
-        }
-      }
-    }, 1000);
-    return () => {
-      clearInterval(myInterval);
+  numberforTimer = (number: number) => number < 0 ? '00' : number < 10 ? `0${number}` : number;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      timeRemainingSeconds: props.startTimeSeconds,
+      minute: Math.floor(props.startTimeSeconds/60),
+      second: props.startTimeSeconds%60,
+      timeString: `${Math.floor(props.startTimeSeconds/60)}:${this.numberforTimer(props.startTimeSeconds%60)}`
     };
-  });
+  }
 
-  const classes = useStyles();
+  tick = () => {
+    let prev: number = this.state.timeRemainingSeconds - 1;
+    let minuteNum: number = Math.floor((prev - 1)/60);
+    let secondNum: number = prev%60;
+    this.setState({
+      timeRemainingSeconds: prev,
+      minute: minuteNum,
+      second: secondNum,
+      timeString: `${minuteNum}:${this.numberforTimer(secondNum)}`
+    });
+  }
 
-  return (
-    <div className={classes.timer}>
-      {minutes === 0 && seconds === 0 ? null : (
-        <h2>
-          {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-        </h2>
-      )}
-    </div>
-  );
+  componentDidMount() {
+    this.timerID = setInterval(() => this.tick(),1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+  
+  render() {
+    return(
+      <div>
+        <h2>{this.state.timeString}</h2>
+      </div>
+    )
+  }
 }
