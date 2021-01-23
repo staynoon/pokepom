@@ -11,7 +11,7 @@ type State = {
   timeString: string;
 };
 
-export class Timer extends React.Component<Props, State> {
+export default class Timer extends React.Component<Props, State> {
   private timerID: any;
 
   numberforTimer = (number: number) => number < 0 ? '00' : number < 10 ? `0${number}` : number;
@@ -26,7 +26,7 @@ export class Timer extends React.Component<Props, State> {
     };
   }
 
-  tick = () => {
+  private tick(): void {
     let prev: number = this.state.timeRemainingSeconds - 1;
     let minuteNum: number = Math.floor((prev - 1)/60);
     let secondNum: number = prev%60;
@@ -38,7 +38,11 @@ export class Timer extends React.Component<Props, State> {
     });
   }
 
-  componentDidMount() {
+  // componentDidMount() {
+  //   this.timerID = setInterval(() => this.tick(),1000);
+  // }
+
+  handleTimerStart = () => {
     this.timerID = setInterval(() => this.tick(),1000);
   }
 
@@ -50,6 +54,7 @@ export class Timer extends React.Component<Props, State> {
     return(
       <div>
         <h2>{this.state.timeString}</h2>
+        <button onClick={this.handleTimerStart}>START</button>
       </div>
     )
   }
